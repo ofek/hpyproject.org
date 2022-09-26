@@ -1,0 +1,1043 @@
+<?xml version="1.0" encoding="utf-8"?>
+<?xml-stylesheet type="text/xsl" href="assets/xml/rss.xsl" media="all"?><rss version="2.0" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>HPy</title><link>https://hpyproject.org/</link><description>A better C API for Python</description><atom:link href="https://hpyproject.org/rss.xml" rel="self" type="application/rss+xml"></atom:link><language>en</language><copyright>Contents © 2022 &lt;a href="mailto:hpy-dev@python.org"&gt;The HPy Team&lt;/a&gt; </copyright><lastBuildDate>Mon, 26 Sep 2022 07:55:34 GMT</lastBuildDate><generator>Nikola (getnikola.com)</generator><docs>http://blogs.law.harvard.edu/tech/rss</docs><item><title>HPy Sprint Status Update and Feedback Session</title><link>https://hpyproject.org/blog/posts/2022/09/hpy_sprint_2022_report/</link><dc:creator>fangerer</dc:creator><description>&lt;p&gt;As we announced in
+&lt;a href="https://hpyproject.org/blog/posts/2022/07/dusseldorf-sprint-2022/"&gt;this blog post&lt;/a&gt;,
+we are currently having our joint PyPy/HPy/GraalPy sprint in Düsseldorf.&lt;/p&gt;
+&lt;p&gt;On Thursday (September 22nd, 2022), we did the HPy sprint report. Most notably,
+we also had several CPython core developers in the call.&lt;/p&gt;
+&lt;p&gt;The sprint report was streamed on
+&lt;a href="https://www.twitch.tv/pypyproject"&gt;Twitch&lt;/a&gt; and the recording is available here:
+&lt;iframe width="560" height="315" src="https://www.youtube.com/embed/kl5w8uR6hGA" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen&gt;&lt;/iframe&gt;&lt;/p&gt;
+&lt;!--TEASER_END--&gt;
+
+&lt;h3&gt;HPy Sprint Call with CPython Core Developers&lt;/h3&gt;
+&lt;p&gt;One of the main goals in the sprint was to write a PEP to officially propose
+HPy as an Python C extension API. We started to do so but before we actually
+submit this PEP, we wanted to have some feedback. So, we invited the Python
+core developers to our call and some of them joined.&lt;/p&gt;
+&lt;p&gt;We gave a short overview of HPy since not everyone might know it yet.
+We talked about the goals and non-goals of HPy and basically asked if Python
+core developers would be willing to participate in HPy design discussions.
+We discussed PSF endorsement and the conclusion was that we need to talk to
+the PSF.&lt;/p&gt;
+&lt;p&gt;We had some very good discussions and we also got some valuable feedback.
+Our next steps are now to incorporate this feedback and prepare the PEP to
+continue discussions there and gather more feedback.&lt;/p&gt;
+&lt;p&gt;We thank the Python core developers for participating in the call and for the
+offered support.&lt;/p&gt;
+&lt;h3&gt;Call with NumPy Core Developer Sebastian Berg&lt;/h3&gt;
+&lt;p&gt;Since we are working on the migration of NumPy to HPy, we had a call with
+Sebastian Berg on Tuesday (September 20th, 2022).&lt;/p&gt;
+&lt;p&gt;We discussed some problems we discovered during our migration work and were
+discussing how to solve it.&lt;/p&gt;
+&lt;p&gt;These were the main discussion points:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;NumPy's structured data type allows to have objects in NumPy arrays which
+  problematic for HPy. This is mainly because doesn't allow to use the API
+  during deallocation of an object. Hence, there is no way to determine the
+  location of those objects by fetching the data type (which requires an API
+  call). We discussed to mirror the structure in pure C-level data structures
+  instead.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;HPy requires to migration all static types to heap types and we discovered
+  that static type behave a bit differently compared to heap types in the case
+  of multiple inheritance. We discussed if that is a bug that CPython needs
+  to solve or if that is something that NumPy should change. So far, it looks
+  rather to be a CPython problem since heap types are pretty new.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;We further discussed how to handle NumPy's C API when migrating to HPy. We
+  agreed that we will probably need to provide a separate NumPy HPy C API as
+  well which will maybe removed at some point in future.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h3&gt;Main Technical Achievements of the Sprint&lt;/h3&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;We have added support for stack traces when running in the debug mode on Mac
+  OS X (&lt;a href="https://github.com/hpyproject/hpy/pull/346"&gt;PR 346&lt;/a&gt;).&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;We are up to finish our incremental porting example
+  (&lt;a href="https://github.com/hpyproject/hpy/pull/246/files"&gt;PR 246&lt;/a&gt;)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;HPy does now also correctly support object members in HPy types
+  (&lt;a href="https://github.com/hpyproject/hpy/pull/347"&gt;PR 347&lt;/a&gt;).&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;</description><guid>https://hpyproject.org/blog/posts/2022/09/hpy_sprint_2022_report/</guid><pubDate>Mon, 26 Sep 2022 10:00:00 GMT</pubDate></item><item><title>HPy on GraalPy and Matplotlib/HPy</title><link>https://hpyproject.org/blog/posts/2022/09/hpy_on_graal_and_mpl/</link><dc:creator>fangerer</dc:creator><description>&lt;p&gt;Recently, the
+&lt;a href="https://www.graalvm.org/python/"&gt;GraalVM Python&lt;/a&gt; team started a series of blog
+posts on &lt;a href="https://medium.com/graalvm"&gt;Medium&lt;/a&gt; about
+&lt;a href="https://medium.com/graalvm/hpy-better-python-c-api-in-practice-79328246e2f8"&gt;HPy on GraalPy&lt;/a&gt;
+and about the
+&lt;a href="https://medium.com/graalvm/porting-matplotlib-from-c-api-to-hpy-aa32faa1f0b5"&gt;migration of Matplotlib to HPy&lt;/a&gt;
+. The second blog post is in particular interesting since it not only describes
+the migration process but also shows performance numbers. The source code is
+also publicly available.&lt;/p&gt;
+&lt;!--TEASER_END--&gt;</description><guid>https://hpyproject.org/blog/posts/2022/09/hpy_on_graal_and_mpl/</guid><pubDate>Thu, 08 Sep 2022 15:30:00 GMT</pubDate></item><item><title>Dusseldorf PyPy/HPy/other sprint Sept 19-23, 2022</title><link>https://hpyproject.org/blog/posts/2022/07/dusseldorf-sprint-2022/</link><dc:creator>fangerer</dc:creator><description>&lt;p&gt;I'm happy to announce that we will finally have another PyPy/HPy/other sprint
+in Düsseldorf, Germany from September 19-23, 2022.&lt;/p&gt;
+&lt;p&gt;The sprint will be located at Heinrich Heine University Düsseldorf. Many
+thanks to Carl Friedrich for organizing this.&lt;/p&gt;
+&lt;p&gt;We will again follow an open format, i.e., everyone that is interesting in HPy,
+PyPy, or some related topic is welcome to join the sprint.&lt;/p&gt;
+&lt;p&gt;See also the
+&lt;a href="https://www.pypy.org/posts/2022/07/ddorf-sprint-sep-2022.html"&gt;announcement on the PyPy blog&lt;/a&gt;.&lt;/p&gt;
+&lt;!--TEASER_END--&gt;
+
+&lt;h2&gt;Goals and topics of the sprint&lt;/h2&gt;
+&lt;p&gt;From the HPy point of view, there is no strict agenda. The main goal of the
+sprint is to make progress on HPy in any way you can think of.
+This includes but is not limited to:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Review, discuss, maybe merge open GitHub PRs.&lt;/li&gt;
+&lt;li&gt;Hacking on HPy: implement new features, fix bugs, etc.&lt;/li&gt;
+&lt;li&gt;Come up with ideas for blog posts or even write blog posts.&lt;/li&gt;
+&lt;li&gt;Migrate packages to HPy or just determine candidates for migration.&lt;/li&gt;
+&lt;li&gt;Document the HPy API.&lt;/li&gt;
+&lt;li&gt;Create small documented and tested porting examples and/or a small porting
+    guide.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;h2&gt;Accommodation&lt;/h2&gt;
+&lt;p&gt;We do not organize an accommodation. A hotel close the campus is the
+&lt;a href="https://hk-hotels-duesseldorf.de/?lang=en"&gt;HK-Hotel Düsseldorf&lt;/a&gt; but we rather
+recommend to book something in the city center since we will usually end up
+there in the evenings. The convenient parts of town are something like
+Altstadt, Stadtmitte, Friedrichstadt, Carlstadt, or Unterbilk.&lt;/p&gt;
+&lt;h2&gt;Registration&lt;/h2&gt;
+&lt;p&gt;There is no formal registration nor any fee for participation. Just to know who
+we should expect to show up, please follow the instructions on
+&lt;a href="https://www.pypy.org/posts/2022/07/ddorf-sprint-sep-2022.html"&gt;the PyPy blog&lt;/a&gt;.&lt;/p&gt;</description><guid>https://hpyproject.org/blog/posts/2022/07/dusseldorf-sprint-2022/</guid><pubDate>Fri, 29 Jul 2022 10:00:00 GMT</pubDate></item><item><title>hpy 0.0.4: Third public release</title><link>https://hpyproject.org/blog/posts/2022/06/hpy-0.0.4-third-public-release/</link><dc:creator>fangerer</dc:creator><description>&lt;p&gt;HPy 0.0.4 is out! The third official HPy release comes with many new features
+and was again made available on PyPI.&lt;/p&gt;
+&lt;p&gt;Major highlights of the release are a bunch of new API functions (e.g.
+&lt;code&gt;HPyErr_ExceptionMatches&lt;/code&gt;, &lt;code&gt;HPyErr_WarnEx&lt;/code&gt;, &lt;code&gt;HPy_Contains&lt;/code&gt;, and more),
+Python 3.10 support, better support for native fields (&lt;code&gt;HPyField&lt;/code&gt;) and global
+variables (&lt;code&gt;HPyGlobal&lt;/code&gt;), new debug mode features (detect invalid raw data
+pointer usage, detect invalid closing of argument handles, detect return of
+invalid handles).&lt;/p&gt;
+&lt;p&gt;Great news too is that we are now able to provide two more non-trivial projects
+that have been (partially) migrated to HPy. This is,
+&lt;a href="https://github.com/hpyproject/kiwi-hpy/"&gt;Kiwisolver&lt;/a&gt;
+and &lt;a href="https://github.com/hpyproject/matplotlib-hpy/"&gt;Matplotlib&lt;/a&gt;.&lt;/p&gt;
+&lt;!--TEASER_END--&gt;
+
+&lt;h2&gt;What is HPy?&lt;/h2&gt;
+&lt;p&gt;HPy provides a new API for extending Python in C. In other words, you use
+&lt;code&gt;#include &amp;lt;hpy.h&amp;gt;&lt;/code&gt; instead of &lt;code&gt;#include &amp;lt;Python.h&amp;gt;&lt;/code&gt;. For more info, look at
+the
+&lt;a href="https://docs.hpyproject.org/en/0.0.4/overview.html"&gt;official documentation&lt;/a&gt;.&lt;/p&gt;
+&lt;h2&gt;Installation&lt;/h2&gt;
+&lt;p&gt;HPy 0.0.4 is best tested on Linux systems but there is also initial support for
+Windows (both &lt;code&gt;x86_64&lt;/code&gt;).
+For CPython, you need to install it manually, using pip:&lt;/p&gt;
+&lt;div class="code"&gt;&lt;pre class="code literal-block"&gt;$ pip install &lt;span class="nv"&gt;hpy&lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;.0.4
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;&lt;a href="https://pypy.org"&gt;PyPy&lt;/a&gt; and &lt;a href="https://graalvm.org/python/"&gt;GraalPython&lt;/a&gt; already
+come with intrinsic HPy support, so no installation is necessary. HPy 0.0.4 will
+be included in the next release of both. In the meantime, you can download a
+nightly or dev build:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://buildbot.pypy.org/nightly/"&gt;PyPy nightly builds&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://github.com/graalvm/graalvm-ce-dev-builds/releases/"&gt;GraalVM CE dev builds&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;To check the version of HPy which is shipped with those, you can either use
+&lt;code&gt;pip&lt;/code&gt; or &lt;code&gt;hpy.universal.get_version()&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="code"&gt;&lt;pre class="code literal-block"&gt;$ pypy -m pip show hpy
+Name: hpy
+Version: &lt;span class="m"&gt;0&lt;/span&gt;.0.4
+...
+
+$ graalpython -m pip show hpy
+Name: hpy
+Version: &lt;span class="m"&gt;0&lt;/span&gt;.0.4
+...
+
+$ pypy -c &lt;span class="s1"&gt;'import hpy.universal; print(hpy.universal.get_version()[0])'&lt;/span&gt;
+&lt;span class="m"&gt;0&lt;/span&gt;.0.4
+
+$ graalpython -c &lt;span class="s1"&gt;'import hpy.universal; print(hpy.universal.get_version()[0])'&lt;/span&gt;
+&lt;span class="m"&gt;0&lt;/span&gt;.0.4
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;API&lt;/h2&gt;
+&lt;p&gt;We are constantly working on the HPy API and keep adding functions that are
+missing. We've added following API functions to the new release:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;HPyErr_SetFromErrnoWithFilename&lt;/code&gt;, &lt;code&gt;HPyErr_SetFromErrnoWithFilenameObjects&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;HPyErr_ExceptionMatches&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;HPyErr_WarnEx&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;HPyErr_WriteUnraisable&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;HPy_Contains&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;HPyLong_AsVoidPtr&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;HPyLong_AsDouble&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;HPyUnicode_AsASCIIString&lt;/code&gt;, &lt;code&gt;HPyUnicode_DecodeASCII&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;HPyUnicode_AsLatin1String&lt;/code&gt;, &lt;code&gt;HPyUnicode_DecodeLatin1&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;HPyUnicode_DecodeFSDefault&lt;/code&gt;, &lt;code&gt;HPyUnicode_DecodeFSDefaultAndSize&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;HPyUnicode_ReadChar&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;For an overview of the current API, please refer to the public API declaration
+in &lt;a href="https://github.com/hpyproject/hpy/blob/0.0.4/hpy/tools/autogen/public_api.h#L116-L440"&gt;&lt;code&gt;public_api.h&lt;/code&gt;&lt;/a&gt;,
+which is used to autogenerate parts of the HPy code and is a reliable list of
+all the supported functions. Also have a look at additional helpers in
+&lt;a href="https://github.com/hpyproject/hpy/blob/0.0.4/hpy/devel/include/hpy/inline_helpers.h"&gt;&lt;code&gt;inline_helpers.h&lt;/code&gt;&lt;/a&gt;.&lt;/p&gt;
+&lt;div class="admonition warning"&gt;
+&lt;p class="admonition-title"&gt;Warning&lt;/p&gt;
+&lt;p&gt;The HPy API is still considered in alpha status and it's subject to change
+between versions.&lt;/p&gt;
+&lt;/div&gt;
+&lt;h2&gt;Debug Mode&lt;/h2&gt;
+&lt;p&gt;We again improved HPy's debug mode and added following new features:&lt;/p&gt;
+&lt;h3&gt;Enable Debug Mode via Environment Variable&lt;/h3&gt;
+&lt;p&gt;The debug mode can now be enabled using environment variable &lt;code&gt;HPY_DEBUG&lt;/code&gt;. It is
+possible to enable the debug mode for all HPy extensions or it is also possible
+to enable it just for certain extensions by enumerating them.&lt;/p&gt;
+&lt;p&gt;Example:&lt;/p&gt;
+&lt;div class="code"&gt;&lt;pre class="code literal-block"&gt;$ &lt;span class="c1"&gt;# enable debug mode for all HPy extensions&lt;/span&gt;
+$ &lt;span class="nv"&gt;HPY_DEBUG&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="m"&gt;1&lt;/span&gt; python3 my_application.py
+
+$ &lt;span class="c1"&gt;# enable debug mode just for ujson_hpy and piconumpy_hpy&lt;/span&gt;
+$ &lt;span class="nv"&gt;HPY_DEBUG&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;ujson_hpy,piconumpy_hpy python3 my_application.py
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;Detect Invalid Use of Raw Data Pointers&lt;/h3&gt;
+&lt;p&gt;Some API functions return a raw data pointer from an object. For example:&lt;/p&gt;
+&lt;div class="code"&gt;&lt;pre class="code literal-block"&gt;&lt;span class="k"&gt;const&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;char&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;HPyUnicode_AsUTF8AndSize&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;HPyContext&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;ctx&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;HPy&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;h&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;HPy_ssize_t&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;size&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;returns a raw data pointer to the UTF8 representation of a Python unicode
+object. HPy doesn't expose the internal representation of the unicode object, so
+the Python implementation may use an arbitrary internal representation. This
+means that the UTF8 representation is just temporarily created for this API call
+and so the raw data must be released at some point. The contract here is that
+the raw data pointer is valid as long as the corresponding handle is valid.&lt;/p&gt;
+&lt;p&gt;Example:&lt;/p&gt;
+&lt;div class="code"&gt;&lt;pre class="code literal-block"&gt;&lt;span class="cp"&gt;#include&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="cpf"&gt;&amp;lt;string.h&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+
+&lt;span class="k"&gt;static&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;const&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kt"&gt;char&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;s_hello_world&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"Hello, World!"&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+
+&lt;span class="k"&gt;static&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;const&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kt"&gt;char&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nf"&gt;foo&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;HPyContext&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;ctx&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="n"&gt;HPy&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;h_unicode&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;HPyUnicode_FromString&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ctx&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;s_hello_word&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="n"&gt;HPy_ssize_t&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;size&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="k"&gt;const&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kt"&gt;char&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;res&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;HPyUnicode_AsUTF8AndSize&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ctx&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;h_unicode&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;size&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="cm"&gt;/* closing 'h_unicode' is, of course, correct */&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="n"&gt;HPy_Close&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ctx&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;h_unicode&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="cm"&gt;/* raw data pointer 'res' may have become invalid when closing&lt;/span&gt;
+&lt;span class="cm"&gt;       'h_unicode' */&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="k"&gt;return&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;res&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+
+&lt;span class="k"&gt;static&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kt"&gt;int&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nf"&gt;bar&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;HPyContext&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;ctx&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="k"&gt;const&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="kt"&gt;char&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;foo&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ctx&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="cm"&gt;/* accessing 's' will cause a fatal error in debug mode (on supported&lt;/span&gt;
+&lt;span class="cm"&gt;    systems) */&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="k"&gt;return&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;strcmp&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;s&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;s_hello_world&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;It is easy to forget about this resriction and if the raw data pointer is used
+after the handle was closed, it may point to garbage. If the debug mode is
+enabled, it will make the underlying memory inaccessible and every access to the
+pointer will then cause a crash of the application. This is currently only
+implemented for Linux systems. We use a different strategy on other systems and
+fill the pointer with some marker bytes that make it easy to detect.&lt;/p&gt;
+&lt;h3&gt;Detect Incorrect Closing of Argument Handles&lt;/h3&gt;
+&lt;p&gt;HPy functions that are called from Python receive handles that are owned by the
+caller. This means that those handles must not be closed by the callee but it
+is, of course, possible to erroneously call &lt;code&gt;HPy_Close&lt;/code&gt; on them. For example:&lt;/p&gt;
+&lt;div class="code"&gt;&lt;pre class="code literal-block"&gt;&lt;span class="n"&gt;HPyDef_METH&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;foo&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"foo"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;foo_impl&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;HPyFunc_O&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;doc&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;"closing argument"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="k"&gt;static&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;HPy&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;foo_impl&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;HPyContext&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;ctx&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;HPy&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;HPy&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;arg&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="c1"&gt;// error: 'arg' is owned by the caller&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="n"&gt;HPy_Close&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ctx&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;arg&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="k"&gt;return&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;HPy_Dup&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ctx&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ctx&lt;/span&gt;&lt;span class="o"&gt;-&amp;gt;&lt;/span&gt;&lt;span class="n"&gt;h_None&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h3&gt;Detect Invalid Handles Returned from Function&lt;/h3&gt;
+&lt;p&gt;A common problem when returning handles is that the author may easily forget to
+create a new handle. The debug mode now detects situations like the following:&lt;/p&gt;
+&lt;div class="code"&gt;&lt;pre class="code literal-block"&gt;&lt;span class="n"&gt;HPyDef_METH&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;foo&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"foo"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;foo_impl&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;HPyFunc_NOARGS&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;doc&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s"&gt;"returns arg w/o dupping it"&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="k"&gt;static&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;HPy&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;foo_impl&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;HPyContext&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;ctx&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;HPy&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;self&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="c1"&gt;// should be: return HPy_Dup(ctx, self);&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="k"&gt;return&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;self&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;Examples&lt;/h2&gt;
+&lt;p&gt;Besides the known examples, this is HPy's 
+&lt;a href="https://github.com/hpyproject/hpy/tree/0.0.4/proof-of-concept"&gt;"proof of concept" package&lt;/a&gt;, 
+&lt;a href="https://github.com/hpyproject/ultrajson-hpy/tree/hpy-0.0.4"&gt;&lt;code&gt;ultrajson-hpy&lt;/code&gt;&lt;/a&gt;,
+&lt;a href="https://github.com/hpyproject/piconumpy/tree/hpy-0.0.4"&gt;&lt;code&gt;piconumpy&lt;/code&gt;&lt;/a&gt;, we are
+excited to present two new packages we have migrated to HPy:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://github.com/hpyproject/kiwi-hpy/"&gt;Kiwi&lt;/a&gt; 
+    is an efficient C++ implementation of the Cassowary constraint solving
+    algorithm.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://github.com/hpyproject/matplotlib-hpy/"&gt;Matplotlib&lt;/a&gt;
+    is a comprehensive library for creating static, animated, and interactive
+    visualizations in Python.
+    Since Matplotlib also has a dependency to NumPy, the migration is not fully
+    finished but luckily, HPy provides the legacy compatibility API such that we
+    can still call legacy C API functions from HPy.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;We are still cleaning these ports up and will write another blog post about the
+ports and open them for discussion with the project owners.&lt;/p&gt;</description><guid>https://hpyproject.org/blog/posts/2022/06/hpy-0.0.4-third-public-release/</guid><pubDate>Thu, 02 Jun 2022 09:15:00 GMT</pubDate></item><item><title>hpy 0.0.3: Second public release</title><link>https://hpyproject.org/blog/posts/2021/10/hpy-0.0.3-second-public-release/</link><dc:creator>fangerer</dc:creator><description>&lt;p&gt;HPy 0.0.3 is out! This is already HPy's second officially released version and
+was again made available on PyPI.&lt;/p&gt;
+&lt;p&gt;The major highlights of this release are new API functions, new debug mode
+features, and Windows support.&lt;/p&gt;
+&lt;!--TEASER_END--&gt;
+
+&lt;h2&gt;What is HPy?&lt;/h2&gt;
+&lt;p&gt;HPy provides a new API for extending Python in C. In other words, you use
+&lt;code&gt;#include &amp;lt;hpy.h&amp;gt;&lt;/code&gt; instead of &lt;code&gt;#include &amp;lt;Python.h&amp;gt;&lt;/code&gt;. For more info, look at
+the
+&lt;a href="https://docs.hpyproject.org/en/latest/overview.html"&gt;official documentation&lt;/a&gt;.&lt;/p&gt;
+&lt;h2&gt;Installation&lt;/h2&gt;
+&lt;p&gt;HPy 0.0.3 is best tested on Linux systems but there is also initial support for
+Windows (both &lt;code&gt;x86_64&lt;/code&gt;).
+For CPython, you need to install it manually, using pip:&lt;/p&gt;
+&lt;div class="code"&gt;&lt;pre class="code literal-block"&gt;$ pip install &lt;span class="nv"&gt;hpy&lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;.0.3
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="admonition note"&gt;
+&lt;p class="admonition-title"&gt;Note&lt;/p&gt;
+&lt;p&gt;Currently, we provide only the &lt;code&gt;sdist&lt;/code&gt; (i.e., the &lt;code&gt;.tar.gz&lt;/code&gt;, no binary
+wheels). But we plan to ship binary wheels starting with the next release.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;&lt;a href="https://pypy.org"&gt;PyPy&lt;/a&gt; and &lt;a href="https://graalvm.org/python/"&gt;GraalPython&lt;/a&gt; already
+come with intrinsic HPy support, so no installation is necessary. HPy 0.0.3 is
+included in the current releases of both, i.e. PyPy 7.3.6 (released on 
+2021-10-17) and GraalPython 21.3.0 (released on 2021-10-19).&lt;/p&gt;
+&lt;p&gt;To double check the version of HPy which is shipped with those, you can either
+use &lt;code&gt;pip&lt;/code&gt; or &lt;code&gt;hpy.universal.get_version()&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="code"&gt;&lt;pre class="code literal-block"&gt;&lt;span class="err"&gt;$&lt;/span&gt; &lt;span class="n"&gt;pypy&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;m&lt;/span&gt; &lt;span class="n"&gt;pip&lt;/span&gt; &lt;span class="n"&gt;show&lt;/span&gt; &lt;span class="n"&gt;hpy&lt;/span&gt;
+&lt;span class="n"&gt;Name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;hpy&lt;/span&gt;
+&lt;span class="n"&gt;Version&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mf"&gt;0.0.3&lt;/span&gt;
+&lt;span class="o"&gt;...&lt;/span&gt;
+
+&lt;span class="err"&gt;$&lt;/span&gt; &lt;span class="n"&gt;graalpython&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;m&lt;/span&gt; &lt;span class="n"&gt;pip&lt;/span&gt; &lt;span class="n"&gt;show&lt;/span&gt; &lt;span class="n"&gt;hpy&lt;/span&gt;
+&lt;span class="n"&gt;Name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;hpy&lt;/span&gt;
+&lt;span class="n"&gt;Version&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mf"&gt;0.0.3&lt;/span&gt;
+&lt;span class="o"&gt;...&lt;/span&gt;
+
+&lt;span class="err"&gt;$&lt;/span&gt; &lt;span class="n"&gt;pypy&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;c&lt;/span&gt; &lt;span class="s1"&gt;'import hpy.universal; print(hpy.universal.get_version()[0])'&lt;/span&gt;
+&lt;span class="mf"&gt;0.0.3&lt;/span&gt;
+
+&lt;span class="err"&gt;$&lt;/span&gt; &lt;span class="n"&gt;graalpython&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;c&lt;/span&gt; &lt;span class="s1"&gt;'import hpy.universal; print(hpy.universal.get_version()[0])'&lt;/span&gt;
+&lt;span class="mf"&gt;0.0.3&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;API&lt;/h2&gt;
+&lt;p&gt;HPy is still under heavy development and does not yet provide as many API
+functions as Python's C API, but more and more pieces are being added.
+In this release, we've added following functions:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;&lt;code&gt;HPy_Is&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;HPyBytes_FromStringAndSize&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;HPyErr_NewException&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;HPyErr_NewExceptionWithDoc&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;HPyUnicode_AsUTF8AndSize&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;HPyUnicode_DecodeFSDefault&lt;/code&gt;&lt;/li&gt;
+&lt;li&gt;&lt;code&gt;HPyImport_ImportModule&lt;/code&gt;&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;All of the above functions except of &lt;code&gt;HPy_Is&lt;/code&gt; have equivalents in the C API. You
+just need to remove the leading &lt;code&gt;H&lt;/code&gt; from the name.&lt;/p&gt;
+&lt;p&gt;Function &lt;code&gt;HPy_Is&lt;/code&gt; was added to be able to do object identity comparisons. In the
+C API, you would just do a pointer comparison like this:&lt;/p&gt;
+&lt;div class="code"&gt;&lt;pre class="code literal-block"&gt;&lt;span class="nv"&gt;PyObject&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="nv"&gt;object_a&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="cm"&gt;/* ... */&lt;/span&gt;&lt;span class="c1"&gt;;&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="nv"&gt;PyObject&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="nv"&gt;object_b&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="cm"&gt;/* ... */&lt;/span&gt;&lt;span class="c1"&gt;;&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="k"&gt;return&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nv"&gt;object_a&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nv"&gt;object_b&lt;/span&gt;&lt;span class="c1"&gt;;&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;In HPy, direct comparisons of handles are forbidden by design, because distinct
+handles can point to the same object. To compare objects by identity, you need
+to use &lt;code&gt;HPy_Is&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="code"&gt;&lt;pre class="code literal-block"&gt;&lt;span class="nv"&gt;HPy&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nv"&gt;object_a&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="cm"&gt;/* ... */&lt;/span&gt;&lt;span class="c1"&gt;;&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="nv"&gt;HPy&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nv"&gt;object_b&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="cm"&gt;/* ... */&lt;/span&gt;&lt;span class="c1"&gt;;&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="k"&gt;return&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nv"&gt;HPy_Is&lt;/span&gt;&lt;span class="ss"&gt;(&lt;/span&gt;&lt;span class="nv"&gt;ctx&lt;/span&gt;,&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nv"&gt;object_a&lt;/span&gt;,&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nv"&gt;object_b&lt;/span&gt;&lt;span class="ss"&gt;)&lt;/span&gt;&lt;span class="c1"&gt;;&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;We've also extended functions &lt;code&gt;HPyArg_Parse&lt;/code&gt; and &lt;code&gt;HPyArg_ParseKeywords&lt;/code&gt; and
+added support for format specifier &lt;code&gt;s&lt;/code&gt;. The new specifier converts a Python
+unicode object into a C string. For example:&lt;/p&gt;
+&lt;div class="code"&gt;&lt;pre class="code literal-block"&gt;&lt;span class="k"&gt;const&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;char&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;result&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;!&lt;/span&gt;&lt;span class="n"&gt;HPyArg_Parse&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ctx&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;NULL&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;nargs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s2"&gt;"s"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;result&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="k"&gt;return&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;HPy_NULL&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="n"&gt;printf&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s2"&gt;"result = &lt;/span&gt;&lt;span class="si"&gt;%s&lt;/span&gt;&lt;span class="se"&gt;\n&lt;/span&gt;&lt;span class="s2"&gt;"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;result&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;For an overview of the current API, please refer to the public API declaration
+in &lt;a href="https://github.com/hpyproject/hpy/blob/release/0.0.3/hpy/tools/autogen/public_api.h#L107-L298"&gt;&lt;code&gt;public_api.h&lt;/code&gt;&lt;/a&gt;,
+which is used to autogenerate parts of the HPy code and is a reliable list of
+all the supported functions.&lt;/p&gt;
+&lt;div class="admonition warning"&gt;
+&lt;p class="admonition-title"&gt;Warning&lt;/p&gt;
+&lt;p&gt;The HPy API is still considered in alpha status and it's subject to change
+between versions.&lt;/p&gt;
+&lt;/div&gt;
+&lt;h2&gt;Debug Mode&lt;/h2&gt;
+&lt;p&gt;One of the great features of HPy is the &lt;em&gt;debug mode&lt;/em&gt;. It was already introduced
+a while ago (and therefore already included in release 0.0.2) but it got a new
+feature that can help C extension developers a lot. HPy's debug mode is now able
+to track closed handles. Previously, it was not guaranteed that accesses to
+closed handles will cause a fatal error. This is because it's possible that
+another object is associated with the closed handle. Then the program would just
+operate on the wrong object. The new feature is able to prevent that.&lt;/p&gt;
+&lt;h2&gt;Examples&lt;/h2&gt;
+&lt;p&gt;The best way to get a glimpse of how to use HPy is to look at examples:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;the HPy repository contains a
+    &lt;a href="https://github.com/hpyproject/hpy/tree/release/0.0.3/proof-of-concept"&gt;"proof of concept" package&lt;/a&gt;. 
+    Make sure to checkout the branch &lt;code&gt;release/0.0.3&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://github.com/hpyproject/ultrajson-hpy/tree/hpy-0.0.3"&gt;&lt;code&gt;ultrajson-hpy&lt;/code&gt;&lt;/a&gt;
+    is a port of the popular &lt;code&gt;ultrajson&lt;/code&gt; package. Make sure to checkout the
+    &lt;code&gt;hpy-0.0.3&lt;/code&gt; branch.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://github.com/hpyproject/piconumpy/tree/hpy-0.0.3"&gt;&lt;code&gt;piconumpy&lt;/code&gt;&lt;/a&gt;
+    contains a very tiny implementation of an &lt;code&gt;array&lt;/code&gt;-like class. Make sure to
+    checkout the &lt;code&gt;hpy-0.0.3&lt;/code&gt; branch.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;</description><guid>https://hpyproject.org/blog/posts/2021/10/hpy-0.0.3-second-public-release/</guid><pubDate>Fri, 22 Oct 2021 15:00:00 GMT</pubDate></item><item><title>hpy 0.0.2: First public release</title><link>https://hpyproject.org/blog/posts/2021/07/hpy-0.0.2-first-public-release/</link><dc:creator>antocuni</dc:creator><description>&lt;p&gt;HPy 0.0.2 is out! This is the first version which is officially released and
+made available on PyPI.&lt;/p&gt;
+&lt;p&gt;The major highlight of this release is that it is supported by three different
+Python implementations: CPython, PyPy and GraalPython.&lt;/p&gt;
+&lt;!--TEASER_END--&gt;
+
+&lt;h2&gt;What is HPy?&lt;/h2&gt;
+&lt;p&gt;HPy provides a new API for extending Python in C. In other words, you use
+&lt;code&gt;#include &amp;lt;hpy.h&amp;gt;&lt;/code&gt; instead of &lt;code&gt;#include &amp;lt;Python.h&amp;gt;&lt;/code&gt;. For more info, look at
+the
+&lt;a href="https://docs.hpyproject.org/en/latest/overview.html"&gt;official documentation&lt;/a&gt;.&lt;/p&gt;
+&lt;h2&gt;Installation&lt;/h2&gt;
+&lt;p&gt;HPy 0.0.2 only supports Linux systems, and it's only tested on
+&lt;code&gt;x86_64&lt;/code&gt;. Windows support is already present on master, and it will be
+included in the next release.&lt;/p&gt;
+&lt;p&gt;For CPython, you need to install it manually, using pip:&lt;/p&gt;
+&lt;div class="code"&gt;&lt;pre class="code literal-block"&gt;$ pip install &lt;span class="nv"&gt;hpy&lt;/span&gt;&lt;span class="o"&gt;==&lt;/span&gt;&lt;span class="m"&gt;0&lt;/span&gt;.0.2
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="admonition note"&gt;
+&lt;p class="admonition-title"&gt;Note&lt;/p&gt;
+&lt;p&gt;Currently, we provide only the &lt;code&gt;sdist&lt;/code&gt; (i.e., the &lt;code&gt;.tar.gz&lt;/code&gt;, no binary
+wheels). See also
+&lt;a href="https://github.com/hpyproject/hpy/issues/223"&gt;issue #223&lt;/a&gt;, contributions
+are welcome :).&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;PyPy and GraalPython ships their own version of HPy, so no installation is
+necessary. HPy 0.0.2 will be included in the next release of both, i.e. PyPy
+7.3.6 (expected in October 2021) and GraalPython 21.2.0 (expected on
+2021-07-20). In the meantime, you can download a nightly build:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="http://buildbot.pypy.org/nightly/py3.7/"&gt;PyPy 3.7 nightly builds&lt;/a&gt;, for example &lt;a href="http://buildbot.pypy.org/nightly/py3.7/pypy-c-jit-102761-3bf99c09018b-linux64.tar.bz2"&gt;revision 3bf99c09018b&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;GraalPython: download the latest &lt;code&gt;graalpython-dev&lt;/code&gt; package from
+    &lt;a href="https://github.com/graalvm/graalvm-ce-dev-builds/releases"&gt;this page&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;To double check the version of HPy which is shipped with those, you can either
+use &lt;code&gt;pip&lt;/code&gt; or &lt;code&gt;hpy.universal.get_version()&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="code"&gt;&lt;pre class="code literal-block"&gt;&lt;span class="err"&gt;$&lt;/span&gt; &lt;span class="n"&gt;pypy&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;m&lt;/span&gt; &lt;span class="n"&gt;pip&lt;/span&gt; &lt;span class="n"&gt;show&lt;/span&gt; &lt;span class="n"&gt;hpy&lt;/span&gt;
+&lt;span class="n"&gt;Name&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;hpy&lt;/span&gt;
+&lt;span class="n"&gt;Version&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="mf"&gt;0.0.2&lt;/span&gt;
+&lt;span class="n"&gt;Summary&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;A&lt;/span&gt; &lt;span class="n"&gt;better&lt;/span&gt; &lt;span class="n"&gt;C&lt;/span&gt; &lt;span class="n"&gt;API&lt;/span&gt; &lt;span class="k"&gt;for&lt;/span&gt; &lt;span class="n"&gt;Python&lt;/span&gt;
+&lt;span class="n"&gt;Home&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;page&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;https&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt;&lt;span class="o"&gt;//&lt;/span&gt;&lt;span class="n"&gt;hpyproject&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;org&lt;/span&gt;
+&lt;span class="n"&gt;Author&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;The&lt;/span&gt; &lt;span class="n"&gt;HPy&lt;/span&gt; &lt;span class="n"&gt;team&lt;/span&gt;
+&lt;span class="n"&gt;Author&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;email&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;hpy&lt;/span&gt;&lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;dev&lt;/span&gt;&lt;span class="nd"&gt;@python&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;org&lt;/span&gt;
+&lt;span class="n"&gt;License&lt;/span&gt;&lt;span class="p"&gt;:&lt;/span&gt; &lt;span class="n"&gt;MIT&lt;/span&gt;
+&lt;span class="o"&gt;...&lt;/span&gt;
+
+&lt;span class="err"&gt;$&lt;/span&gt; &lt;span class="n"&gt;pypy&lt;/span&gt; &lt;span class="o"&gt;-&lt;/span&gt;&lt;span class="n"&gt;c&lt;/span&gt; &lt;span class="s1"&gt;'import hpy.universal; print(hpy.universal.get_version()[0])'&lt;/span&gt;
+&lt;span class="mf"&gt;0.0.2&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;h2&gt;API&lt;/h2&gt;
+&lt;p&gt;At the moment HPy supports only a small fraction of the full API offered by
+the old Python/C API, but it is enough to write non-trivial extensions, and
+the documentation is
+scarce. &lt;a href="https://github.com/hpyproject/hpy/blob/release/0.0.2/hpy/tools/autogen/public_api.h#L107-L288"&gt;&lt;code&gt;public_api.h&lt;/code&gt;&lt;/a&gt;,
+which is used to autogenerate parts of the HPy code, is a reliable list of all
+the supported functions.&lt;/p&gt;
+&lt;div class="admonition warning"&gt;
+&lt;p class="admonition-title"&gt;Warning&lt;/p&gt;
+&lt;p&gt;The HPy API is still considered in alpha status and it's subject to change
+between versions. In fact, the current master is already incompatible with
+hpy-0.0.2 because of
+&lt;a href="https://github.com/hpyproject/hpy/pull/182"&gt;PR #182&lt;/a&gt;, which renamed all
+occurences of &lt;code&gt;HPyContext&lt;/code&gt; into &lt;code&gt;HPyContext*&lt;/code&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;h2&gt;Examples&lt;/h2&gt;
+&lt;p&gt;The best way to get a glimpse of how to use HPy is to look at examples:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;the HPy repository contains a
+    &lt;a href="https://github.com/hpyproject/hpy/tree/release/0.0.2/proof-of-concept"&gt;"proof of concept" package&lt;/a&gt;. 
+    Make sure to checkout the branch &lt;code&gt;release/0.0.2&lt;/code&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://github.com/hpyproject/ultrajson-hpy/tree/hpy-0.0.2"&gt;&lt;code&gt;ultrajson-hpy&lt;/code&gt;&lt;/a&gt;
+    is a port of the popular &lt;code&gt;ultrajson&lt;/code&gt; package. Make sure to checkout the
+    &lt;code&gt;hpy-0.0.2&lt;/code&gt; branch.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://github.com/hpyproject/piconumpy/tree/hpy-0.0.2"&gt;&lt;code&gt;piconumpy&lt;/code&gt;&lt;/a&gt;
+    contains a very tiny implementation of an &lt;code&gt;array&lt;/code&gt;-like class. Make sure to
+    checkout the &lt;code&gt;hpy-0.0.2&lt;/code&gt; branch.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;</description><guid>https://hpyproject.org/blog/posts/2021/07/hpy-0.0.2-first-public-release/</guid><pubDate>Thu, 15 Jul 2021 15:00:00 GMT</pubDate></item><item><title>#hpy IRC moves to Libera.Chat</title><link>https://hpyproject.org/blog/posts/2021/05/hpy-irc-moves-to-libera-chat/</link><dc:creator>antocuni</dc:creator><description>&lt;p&gt;Following the example of many other FOSS projects, the HPy team has
+decided to move its official &lt;code&gt;#hpy&lt;/code&gt; IRC channel from Freenode to
+&lt;a href="https://libera.chat/"&gt;Libera.Chat&lt;/a&gt;: &lt;a href="irc://irc.libera.chat/hpy"&gt;irc.libera.chat/hpy&lt;/a&gt;&lt;/p&gt;
+&lt;p&gt;The core devs will no longer be present on the Freenode channel, so we recommend to
+join the new channel as soon as possible.&lt;/p&gt;
+&lt;p&gt;wikimedia.org has a
+&lt;a href="https://meta.wikimedia.org/wiki/IRC/Migrating_to_Libera_Chat"&gt;nice guide&lt;/a&gt; on
+how to setup your client to migrate from Freenode to Libera.Chat.&lt;/p&gt;
+&lt;!--TEASER_END--&gt;</description><guid>https://hpyproject.org/blog/posts/2021/05/hpy-irc-moves-to-libera-chat/</guid><pubDate>Sat, 29 May 2021 10:00:00 GMT</pubDate></item><item><title>HPy @ Python Language Summit</title><link>https://hpyproject.org/blog/posts/2021/05/hpy-python-language-summit/</link><dc:creator>antocuni</dc:creator><description>&lt;p&gt;Yesterday I had the privilege to give a talk about HPy
+ (&lt;a href="https://hpyproject.org/talks/2021/05/hpy-present-and-future.pdf"&gt;sildes&lt;/a&gt;) at the
+ &lt;a href="https://us.pycon.org/2021/summits/language/"&gt;Python Language Summit 2021&lt;/a&gt;.&lt;/p&gt;
+&lt;p&gt;The organizers of the summit will soon publish a full report about the event
+(edit: now available
+&lt;a href="https://pyfound.blogspot.com/2021/05/the-2021-python-language-summit.html"&gt;here&lt;/a&gt;),
+but &lt;a href="https://pyfound.blogspot.com/2021/05/the-2021-python-language-summit-hpy.html"&gt;for the HPy-specific
+part&lt;/a&gt;,
+we got generally good feedback. Someone has a few concerns that if CPython is
+to change the API, HPy might not be going far enough. Others said that Python
+shouldn't wait for the "perfect" API if HPy can be the "good" one that helps it
+evolve.&lt;/p&gt;
+&lt;p&gt;Everyone was open to have HPy-compatible wheels on PyPI, once the HPy
+Universal ABI stays relatively stable. Many people suggested that we should
+really write a PEP to propose HPy as a "semi-official" API for Python.&lt;/p&gt;
+&lt;!--TEASER_END--&gt;
+
+&lt;p&gt;An interesting question was about which are the VM optimizations which are
+compatible with the HPy API. The following is a non-exhaustive list of things
+which are known to work because they already used by PyPy and/or GraalPython:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;JIT compiler&lt;/li&gt;
+&lt;li&gt;moving/compacting GCs&lt;/li&gt;
+&lt;li&gt;storage strategies&lt;/li&gt;
+&lt;li&gt;maps (also known as "hidden classes")&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;One notable missing optimization from the list above is tagged
+pointers. Currently there is no implementation which uses tagged pointers and
+supports HPy. However, we don't think there is any fundamental design issue in
+HPy which would prevent it: if you turn tagged pointers into "tagged handles",
+things should just work out of the box.&lt;/p&gt;</description><guid>https://hpyproject.org/blog/posts/2021/05/hpy-python-language-summit/</guid><pubDate>Wed, 12 May 2021 10:00:00 GMT</pubDate></item><item><title>HPy Status Update</title><link>https://hpyproject.org/blog/posts/2021/05/may-status-update/</link><dc:creator>hodgestar</dc:creator><description>&lt;p&gt;HPy's first git commit was on Friday, 12 July 2019. Despite the crazy state
+of the world, &lt;a href="https://github.com/hpyproject/hpy/"&gt;HPy&lt;/a&gt; has come a long way
+since then. This is a quick update to say where we are now and what's planned
+for the immediate future.&lt;/p&gt;
+&lt;!--TEASER_END--&gt;
+
+&lt;h2&gt;What can one do with HPy right now?&lt;/h2&gt;
+&lt;p&gt;One can already port non-trivial Python extensions to the HPy API, but
+there is also still a lot of work to do. Things one can do right now
+with HPy include:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;Initialize an extension module&lt;/li&gt;
+&lt;li&gt;Create custom extension types&lt;/li&gt;
+&lt;li&gt;Create custom methods and functions&lt;/li&gt;
+&lt;li&gt;Interact with many built-in types (including dictionaries, tuples,
+    lists, strings, bytes and longs)&lt;/li&gt;
+&lt;li&gt;Raise and check exceptions&lt;/li&gt;
+&lt;li&gt;Parse arguments to C functions&lt;/li&gt;
+&lt;li&gt;Call Python functions&lt;/li&gt;
+&lt;li&gt;Compile an extension against either the "universal" or "cpython" ABIs (see below)&lt;/li&gt;
+&lt;li&gt;Load a single compiled "universal" extension into different Python implementations.&lt;/li&gt;
+&lt;li&gt;Put a "universal" extension into debug mode &lt;strong&gt;at runtime&lt;/strong&gt; (see below
+    for how this is possible without a performance penalty).&lt;/li&gt;
+&lt;li&gt;Compile extensions for POSIX and Windows (MSVC).&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;An extension written using HPy may be compiled against either the "cpython" or
+"universal" ABI:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;compiling against the "cpython" ABI produces an ordinary Python C extension.
+    The extension uses the HPy API only internally. From the point of view of
+    the Python implementation the compiled module is an ordinary C extension
+    that just happens to have been compiled using HPy. Note that as is the case
+    for ordinary C extensions, the modules produced target a specific
+    &lt;a href="https://www.python.org/dev/peps/pep-0425/"&gt;ABI tag&lt;/a&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;compiling against the "universal" ABI produces an HPy C extension. This
+    extension does not use the Python C API directly at all and the ABI
+    is unique (up to platform and HPy version number). The same compiled module
+    may thus be loaded by multiple Python versions and implementations.
+    A Python implementation must know how to load such an extension and have
+    implemented the HPy universal ABI. Universal ABI implementations exist for
+    CPython, PyPy and GraalPython.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Debug mode is implemented by replacing the HPy context with a debug mode
+context at runtime. The debug context wraps the original context and tracks
+all HPy API calls. Debug mode already supports finding handles that are
+leaked (i.e. not closed) and handles that are used after being closed.
+Additional debug features will be fairly straightforward to add, like for example checking for &lt;code&gt;NULL&lt;/code&gt; pointers or detecting whether the user is trying to call a function without holding the GIL.&lt;/p&gt;
+&lt;p&gt;The debug mode is written using HPy itself, so its implementation can be
+shared by different Python implementations that support HPy.&lt;/p&gt;
+&lt;h2&gt;What are the next steps?&lt;/h2&gt;
+&lt;p&gt;The big picture is that we're working towards writing a Cython backend
+and porting core features of numpy to HPy. There is still some way to go
+but the immediate next steps planned are:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;Add support for storing long-lived references to other Python objects in
+    custom types, i.e. the equivalent of storing a &lt;code&gt;PyObject *&lt;/code&gt; in
+    one of the fields with the struct of a custom type. HPy handles are only for
+    short-lived references, so we need a GC-friendly way to store long-lived
+    references.
+    See &lt;a href="https://github.com/hpyproject/hpy/issues/9"&gt;issue #9&lt;/a&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Implement isolated module level state, to avoid using C static global
+    variables. This will be the HPy equivalent of
+    &lt;a href="https://www.python.org/dev/peps/pep-0573/"&gt;PEP 573&lt;/a&gt; and
+    &lt;a href="https://www.python.org/dev/peps/pep-0630/"&gt;PEP 630&lt;/a&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Implement multi-phase Python module initialization (HPy currently uses the
+    legacy module initialization).
+    See &lt;a href="https://github.com/hpyproject/hpy/pull/184"&gt;issue #183&lt;/a&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Update the PyPy and GraalPython HPy implementations to support all the
+    latest HPy features.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Start work on an HPy backend for Cython.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Continuing work on a minimal port of numpy's array type to HPy.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Ask the CPython core developers whether we can find a way to support
+    HPy universal extensions directly within in CPython (currently we write
+    a small &lt;code&gt;.py&lt;/code&gt; file that knows how to load the universal extension, but
+    the presence of this stub file causes many small edge cases that are
+    annoying for HPy developers and users)&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;If you'd like to work on any of these with us, drop us a note in the
+comments or mailing list or join us on IRC.&lt;/p&gt;
+&lt;p&gt;Happy hacking,
+The HPy Team.&lt;/p&gt;</description><guid>https://hpyproject.org/blog/posts/2021/05/may-status-update/</guid><pubDate>Fri, 07 May 2021 10:00:00 GMT</pubDate></item><item><title>Hello, HPy</title><link>https://hpyproject.org/blog/posts/2021/03/hello-hpy/</link><dc:creator>antocuni</dc:creator><description>&lt;p&gt;Welcome to the shiny new HPy blog!&lt;/p&gt;
+&lt;p&gt;HPy has been around for a while now. The initial discussion started during
+EuroPython 2019, in the good old times when we could still go to conferences
+and have real-life meetings. Since then, HPy progressed &lt;strong&gt;a lot&lt;/strong&gt; from the
+point of view of the actual code, but we have been a bit too silent
+w.r.t. communicating what we are doing to the external world and to the broader
+Python community. Hopefully, now that this blog is online we will do a better
+job at periodically communicating the status of HPy, so make sure to
+&lt;a href="https://hpyproject.org/rss.xml"&gt;subscribe to the RSS feed&lt;/a&gt;.&lt;/p&gt;
+&lt;!--TEASER_END--&gt;
+
+&lt;h2&gt;What is HPy?&lt;/h2&gt;
+&lt;p&gt;Quoting the frontpage of our website:&lt;/p&gt;
+&lt;blockquote&gt;
+&lt;p&gt;HPy provides a new API for extending Python in C. In other words, you use
+&lt;code&gt;#include &amp;lt;hpy.h&amp;gt;&lt;/code&gt; instead of &lt;code&gt;#include &amp;lt;Python.h&amp;gt;&lt;/code&gt;.&lt;/p&gt;
+&lt;/blockquote&gt;
+&lt;p&gt;The official &lt;a href="https://docs.python.org/3/c-api/index.html&amp;gt;"&gt;Python/C API&lt;/a&gt; is
+specific to the current implementation of CPython: it exposes many
+internal details which makes it hard:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;to implement it for other Python implementations (e.g. PyPy, GraalPython,
+    Jython, IronPython, etc.)&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;to experiment with new things inside CPython itself: e.g. using a GC
+    instead of refcounting, or to remove the GIL.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;to correctly check things like refcount handling: the external API gets mixed in with implementation details that should be hidden.&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;Over the years, it has become evident that
+&lt;a href="https://www.pypy.org/posts/2018/09/inside-cpyext-why-emulating-cpython-c-8083064623681286567.html"&gt;emulating the Python/C API in an efficient way is challenging&lt;/a&gt;,
+if not impossible. The main goal of HPy is expose a C API which is possible
+to implement in an efficient way on a number of very diverse Python
+implementations.&lt;/p&gt;
+&lt;p&gt;There are several advantages to writing your C extension in HPy:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;it runs much faster on PyPy, and at native speed on CPython&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;it is possible to compile a single binary which runs unmodified on all
+    supported Python implementations and versions&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;it is simpler and more manageable than the Python/C API&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;it provides an improved debugging experience: in "debug mode", HPy
+    actively checks for many common mistakes such as reference leaks and
+    invalid usage of objects after they have been deleted. It is possible to
+    turn the "debug mode" on at startup time, without needing to recompile
+    Python or the extension itself&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;See also the official docs for a more in-depth
+&lt;a href="https://docs.hpyproject.org/en/latest/overview.html#hpy-overview"&gt;overview&lt;/a&gt;.&lt;/p&gt;
+&lt;h2&gt;Show me an example&lt;/h2&gt;
+&lt;p&gt;This is a "normal" Python/C extension:&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://hpyproject.org/listings/2021/03/hello-hpy/hello_old.c.html"&gt;2021/03/hello-hpy/hello_old.c&lt;/a&gt;  &lt;a href="https://hpyproject.org/listings/2021/03/hello-hpy/hello_old.c"&gt;(Source)&lt;/a&gt;&lt;/p&gt;&lt;div class="code"&gt;&lt;pre class="code literal-block"&gt;&lt;span class="cp"&gt;#include&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="cpf"&gt;&amp;lt;Python.h&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+
+&lt;span class="k"&gt;static&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;PyObject&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nf"&gt;add&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;PyObject&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;PyObject&lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="kt"&gt;long&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;!&lt;/span&gt;&lt;span class="n"&gt;PyArg_ParseTuple&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"ll"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;        &lt;/span&gt;&lt;span class="k"&gt;return&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;NULL&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="k"&gt;return&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;PyLong_FromLong&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+
+&lt;span class="k"&gt;static&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;PyMethodDef&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;HelloMethods&lt;/span&gt;&lt;span class="p"&gt;[]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="s"&gt;"add"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;PyCFunction&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="n"&gt;add&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;METH_VARARGS&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"add two integers"&lt;/span&gt;&lt;span class="p"&gt;},&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="nb"&gt;NULL&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;NULL&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;0&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;NULL&lt;/span&gt;&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="p"&gt;};&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+
+&lt;span class="k"&gt;static&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="k"&gt;struct&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nc"&gt;PyModuleDef&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;moduledef&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="n"&gt;PyModuleDef_HEAD_INIT&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="s"&gt;"hello_old"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="s"&gt;"hello example using the old Python/C API"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="mi"&gt;-1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="n"&gt;HelloMethods&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="p"&gt;};&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+
+&lt;span class="n"&gt;PyMODINIT_FUNC&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="nf"&gt;PyInit_hello_old&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="kt"&gt;void&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="k"&gt;return&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;PyModule_Create&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;moduledef&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;p&gt;We can compile it with a simple &lt;code&gt;setup.py&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="code"&gt;&lt;pre class="code literal-block"&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;setuptools&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;setup&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Extension&lt;/span&gt;
+&lt;span class="n"&gt;setup&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+    &lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;"hello"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="n"&gt;ext_modules&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
+        &lt;span class="n"&gt;Extension&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'hello_old'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'hello_old.c'&lt;/span&gt;&lt;span class="p"&gt;]),&lt;/span&gt;
+    &lt;span class="p"&gt;],&lt;/span&gt;
+&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="code"&gt;&lt;pre class="code literal-block"&gt;&lt;span class="go"&gt;$ python setup.py build_ext --inplace&lt;/span&gt;
+&lt;span class="gp"&gt;...&lt;/span&gt;
+&lt;span class="go"&gt;$ python &lt;/span&gt;
+&lt;span class="gp"&gt;&amp;gt;&amp;gt;&amp;gt; &lt;/span&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;hello_old&lt;/span&gt;
+&lt;span class="gp"&gt;&amp;gt;&amp;gt;&amp;gt; &lt;/span&gt;&lt;span class="n"&gt;hello_old&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;add&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;20&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="go"&gt;30&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Now, let's start to uncover the HPy equivalent, piece by piece:&lt;/p&gt;
+&lt;div class="code"&gt;&lt;pre class="code literal-block"&gt;&lt;span class="cp"&gt;#include&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="cpf"&gt;&amp;lt;hpy.h&amp;gt;&lt;/span&gt;&lt;span class="cp"&gt;&lt;/span&gt;
+
+&lt;span class="n"&gt;HPyDef_METH&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;add&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"add"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;add_impl&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;HPyFunc_VARARGS&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;            &lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;doc&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"add two integers"&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+
+&lt;span class="k"&gt;static&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;HPy&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nf"&gt;add_impl&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;HPyContext&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ctx&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;HPy&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;self&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;HPy&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;HPy_ssize_t&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;nargs&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="kt"&gt;long&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="k"&gt;if&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="o"&gt;!&lt;/span&gt;&lt;span class="n"&gt;HPyArg_Parse&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ctx&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="nb"&gt;NULL&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;args&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;nargs&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"ll"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;        &lt;/span&gt;&lt;span class="k"&gt;return&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;HPy_NULL&lt;/span&gt;&lt;span class="p"&gt;;&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="k"&gt;return&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;HPyLong_FromLong&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ctx&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;a&lt;/span&gt;&lt;span class="o"&gt;+&lt;/span&gt;&lt;span class="n"&gt;b&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;There are a bunch of things which are different from the usual C-extension module:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;the former &lt;code&gt;PyObject *&lt;/code&gt; is now &lt;code&gt;HPy&lt;/code&gt;, which we call "a handle". Handles are
+  similar to &lt;code&gt;PyObject *&lt;/code&gt;, but are completely opaque: for more information,
+  see the
+  &lt;a href="https://docs.hpyproject.org/en/latest/api.html#handles"&gt;official docs&lt;/a&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;There is an additional parameter, &lt;code&gt;HPyContext ctx&lt;/code&gt;. One of the problems of
+  the old API is that often it implicitly relies on the existence of a
+  per-thread or per-subinterpreter local state. &lt;code&gt;HPyContext&lt;/code&gt; makes this state explicit. This
+  makes the whole API more regular and makes it possible to develop new
+  interesting features such as the
+  &lt;a href="https://docs.hpyproject.org/en/latest/overview.html#term-HPy-Universal-ABI"&gt;Universal ABI&lt;/a&gt;
+  and the &lt;a href="https://github.com/hpyproject/hpy/pull/142"&gt;Debug mode&lt;/a&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;HPy introduces the concept of &lt;code&gt;HPyDef&lt;/code&gt;s. &lt;code&gt;HPyDef_METH&lt;/code&gt; is a macro which
+  generates the definition of an &lt;code&gt;HPyDef&lt;/code&gt; static constant named &lt;code&gt;add&lt;/code&gt;, which
+  represents the definition of a Python method implemented by the C function
+  &lt;code&gt;add_impl&lt;/code&gt;. In this specific example &lt;code&gt;HPyDef_METH&lt;/code&gt; contains more or less the
+  same informations as the old &lt;code&gt;PyMethodDef&lt;/code&gt;, but &lt;code&gt;HPyDef&lt;/code&gt; are more
+  general. For example, when defining custom types you can use things like
+  &lt;code&gt;HPyDef_SLOT&lt;/code&gt;, &lt;code&gt;HPyDef_GETSET&lt;/code&gt;, etc.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;Notice that we no longer need the cast to &lt;code&gt;(PyCFunction)&lt;/code&gt;. One of the
+  biggest advantages of &lt;code&gt;HPyDef_METH&lt;/code&gt; is that since it's a macro, it can
+  automatically generate a forward declaration for &lt;code&gt;add_impl&lt;/code&gt;, with the
+  correct signature. This means that if you use the wrong number and/or type
+  of parameters, you get a nice compile-time error instead of an obscure crash
+  at runtime.&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;The signature corresponding to &lt;code&gt;HPyFunc_VARARGS&lt;/code&gt; is slighly different than
+  the old &lt;code&gt;METH_VARARGS&lt;/code&gt;: we pass positional arguments as a C array instead of
+  a Python tuple. This means that it is possible to call the function without
+  having to allocate a Python tuple, and for example the PyPy implementation
+  of HPy takes advantage of that. This is very similar to CPython's
+  &lt;a href="https://www.python.org/dev/peps/pep-0590/"&gt;VectorCall protocol&lt;/a&gt;.&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;div class="admonition note"&gt;
+&lt;p class="admonition-title"&gt;Note&lt;/p&gt;
+&lt;p&gt;In this post, we are using a slightly old version of HPy. If you try with
+a newer version you should use &lt;code&gt;HPyContext *ctx&lt;/code&gt; instead of &lt;code&gt;HPyContext ctx&lt;/code&gt;.
+See also &lt;a href="https://github.com/hpyproject/hpy/issues/150"&gt;Issue #150&lt;/a&gt;
+and &lt;a href="https://github.com/hpyproject/hpy/pull/182"&gt;PR #182&lt;/a&gt;.&lt;/p&gt;
+&lt;/div&gt;
+&lt;p&gt;Let's continue our tour of &lt;code&gt;hello_new.c&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="code"&gt;&lt;pre class="code literal-block"&gt;&lt;span class="k"&gt;static&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;HPyDef&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;*&lt;/span&gt;&lt;span class="n"&gt;hello_defines&lt;/span&gt;&lt;span class="p"&gt;[]&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;add&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="nb"&gt;NULL&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="p"&gt;};&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+
+&lt;span class="k"&gt;static&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;HPyModuleDef&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;moduledef&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="n"&gt;HPyModuleDef_HEAD_INIT&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;m_name&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"hello_new"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;m_doc&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="s"&gt;"hello example using the new HPy API"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;m_size&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="mi"&gt;-1&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="p"&gt;.&lt;/span&gt;&lt;span class="n"&gt;defines&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;hello_defines&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="p"&gt;};&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+
+&lt;span class="n"&gt;HPy_MODINIT&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;hello_new&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="k"&gt;static&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;HPy&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;init_hello_new_impl&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;HPyContext&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;ctx&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="p"&gt;{&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="w"&gt;    &lt;/span&gt;&lt;span class="k"&gt;return&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="n"&gt;HPyModule_Create&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;ctx&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;&lt;span class="w"&gt; &lt;/span&gt;&lt;span class="o"&gt;&amp;amp;&lt;/span&gt;&lt;span class="n"&gt;moduledef&lt;/span&gt;&lt;span class="p"&gt;);&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;span class="p"&gt;}&lt;/span&gt;&lt;span class="w"&gt;&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;This is pretty similar to the old code. The biggest change is that instead of
+declaring an array of &lt;code&gt;PyMethodDef&lt;/code&gt;, we create an array of &lt;code&gt;HPyDef&lt;/code&gt; as
+discussed above.&lt;/p&gt;
+&lt;p&gt;Finally, we need to modify &lt;code&gt;setup.py&lt;/code&gt;. Compiling an HPy extension is as easy
+as adding &lt;code&gt;setup_requires=['hpy.devel']&lt;/code&gt; and use &lt;code&gt;hpy_ext_modules&lt;/code&gt;:&lt;/p&gt;
+&lt;p&gt;&lt;a href="https://hpyproject.org/listings/2021/03/hello-hpy/setup.py.html"&gt;2021/03/hello-hpy/setup.py&lt;/a&gt;  &lt;a href="https://hpyproject.org/listings/2021/03/hello-hpy/setup.py"&gt;(Source)&lt;/a&gt;&lt;/p&gt;&lt;div class="code"&gt;&lt;pre class="code literal-block"&gt;&lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;setuptools&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;setup&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;Extension&lt;/span&gt;
+&lt;span class="n"&gt;setup&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;
+    &lt;span class="n"&gt;name&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="s2"&gt;"hello"&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt;
+    &lt;span class="n"&gt;ext_modules&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
+        &lt;span class="n"&gt;Extension&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'hello_old'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'hello_old.c'&lt;/span&gt;&lt;span class="p"&gt;]),&lt;/span&gt;
+    &lt;span class="p"&gt;],&lt;/span&gt;
+    &lt;span class="n"&gt;hpy_ext_modules&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;
+        &lt;span class="n"&gt;Extension&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'hello_new'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'hello_new.c'&lt;/span&gt;&lt;span class="p"&gt;]),&lt;/span&gt;
+    &lt;span class="p"&gt;],&lt;/span&gt;
+    &lt;span class="n"&gt;setup_requires&lt;/span&gt;&lt;span class="o"&gt;=&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="s1"&gt;'hpy.devel'&lt;/span&gt;&lt;span class="p"&gt;],&lt;/span&gt;
+&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+&lt;h2&gt;Compiling HPy extensions&lt;/h2&gt;
+&lt;p&gt;In this demo, we will show how to setup an environment to try HPy and compile
+extensions on both CPython and PyPy.&lt;/p&gt;
+&lt;p&gt;At the moment HPy is still in its early stages and the API is still subject to
+change, so we have not done any official release yet. For the same reason, if
+you want to use HPy on PyPy or GraalPython, you need to manually ensure to install
+a version which is supported. This is just temporary, and this kind of things will
+be sorted out automatically once we start to roll out official releases.&lt;/p&gt;
+&lt;p&gt;So, we need to install HPy from the github repo. Moreover, the HPy
+implementations inside PyPy and GraalPython are lagging behind a little, so we will
+install a slightly old revision:&lt;/p&gt;
+&lt;ul&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://github.com/hpyproject/hpy/commit/eb07982"&gt;HPy revision eb07982&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;nightly build of the PyPy hpy branch: &lt;a href="http://buildbot.pypy.org/nightly/hpy/pypy-c-jit-101860-a2f7c80062e8-linux64.tar.bz2"&gt;a2f7c80062e8 for linux64&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;PyPy nighly builds: &lt;a href="http://buildbot.pypy.org/nightly/"&gt;main page&lt;/a&gt; and
+  &lt;a href="http://buildbot.pypy.org/nightly/hpy/"&gt;hpy branch&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;GraalPython nightly build: &lt;a href="https://github.com/graalvm/graalvm-ce-dev-builds/releases/download/21.1.0-dev-20210330_0726/graalpython-dev-linux-amd64.tar.gz"&gt;Linux&lt;/a&gt; or &lt;a href="https://github.com/graalvm/graalvm-ce-dev-builds/releases/download/21.1.0-dev-20210330_0726/graalpython-dev-macos-amd64.tar.gz"&gt;macOS&lt;/a&gt;&lt;/p&gt;
+&lt;/li&gt;
+&lt;li&gt;
+&lt;p&gt;&lt;a href="https://github.com/hpyproject/hpyproject.org/tree/main/listings/2021/03/hello-hpy"&gt;source code&lt;/a&gt; of this example&lt;/p&gt;
+&lt;/li&gt;
+&lt;/ul&gt;
+&lt;p&gt;The first step is to create a &lt;code&gt;venv&lt;/code&gt; for CPython and install &lt;code&gt;hpy&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="code"&gt;&lt;pre class="code literal-block"&gt;$ python3 -m venv tryhpy
+$ . tryhpy/bin/activate
+$ pip install wheel
+$ pip install git+git://github.com/hpyproject/hpy.git@eb07982
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;To install a nightly build of PyPy it is enough to unpack the tarball and run
+&lt;code&gt;-m ensurepip&lt;/code&gt;. We can check what is the HPy version supported by PyPy by
+calling &lt;code&gt;hpy.universal.get_version()&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="code"&gt;&lt;pre class="code literal-block"&gt;$ curl -O http://buildbot.pypy.org/nightly/hpy/pypy-c-jit-101860-a2f7c80062e8-linux64.tar.bz2
+$ tar xf pypy-c-jit-101860-a2f7c80062e8-linux64.tar.bz2
+$ ./pypy-c-jit-101860-a2f7c80062e8-linux64/bin/pypy -m ensurepip
+
+$ ./pypy-c-jit-101860-a2f7c80062e8-linux64/bin/pypy
+&amp;gt;&amp;gt;&amp;gt;&amp;gt; import hpy.universal
+&amp;gt;&amp;gt;&amp;gt;&amp;gt; hpy.universal.get_version&lt;span class="o"&gt;()&lt;/span&gt;
+&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'0.1.dev959+geb07982'&lt;/span&gt;, &lt;span class="s1"&gt;'eb07982'&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;For GraalPython, just unpack the tarball and create a venv:&lt;/p&gt;
+&lt;div class="code"&gt;&lt;pre class="code literal-block"&gt;$ curl -LO https://github.com/graalvm/graalvm-ce-dev-builds/releases/download/21.1.0-dev-20210330_0726/graalpython-dev-linux-amd64.tar.gz
+$ tar xzf graalpython-dev-linux-amd64.tar.gz
+$ graalpython-21.1.0-dev-linux-amd64/bin/graalpython -m venv hpy-venv
+$ hpy-venv/bin/graalpython
+&amp;gt;&amp;gt;&amp;gt; import hpy.universal
+&amp;gt;&amp;gt;&amp;gt; hpy.universal.get_version&lt;span class="o"&gt;()&lt;/span&gt;
+&amp;gt;&amp;gt;&amp;gt; &lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'0.1.dev950+g98f448a'&lt;/span&gt;, &lt;span class="s1"&gt;'98f448a'&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Now that our enviroment is ready, we can compile and try our extensions:&lt;/p&gt;
+&lt;div class="code"&gt;&lt;pre class="code literal-block"&gt;$ &lt;span class="nb"&gt;cd&lt;/span&gt; /path/to/example/
+$ . /path/to/tryhpy/bin/activate    &lt;span class="c1"&gt;# activate the venv&lt;/span&gt;
+$ python setup.py build_ext --inplace
+&lt;span class="o"&gt;[&lt;/span&gt;...&lt;span class="o"&gt;]&lt;/span&gt;
+
+$ ls -1 *.so
+hello_new.cpython-38-x86_64-linux-gnu.so
+hello_old.cpython-38-x86_64-linux-gnu.so
+
+$ python
+&amp;gt;&amp;gt;&amp;gt; import hello_old, hello_new
+&amp;gt;&amp;gt;&amp;gt; hello_old.add&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;10&lt;/span&gt;, &lt;span class="m"&gt;20&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="m"&gt;30&lt;/span&gt;
+&amp;gt;&amp;gt;&amp;gt; hello_new.add&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;30&lt;/span&gt;, &lt;span class="m"&gt;40&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="m"&gt;70&lt;/span&gt;
+&amp;gt;&amp;gt;&amp;gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;It worked! One important thing to note is the filename of &lt;code&gt;hello_new&lt;/code&gt;:
+&lt;code&gt;.cpython-38-x86_64-linux-gnu.so&lt;/code&gt; is the standard filename for CPython 3.8
+extension modules. This happens because by default &lt;code&gt;hpy_ext_modules&lt;/code&gt; targets
+the
+&lt;a href="https://docs.hpyproject.org/en/latest/overview.html#target-abis"&gt;CPython ABI&lt;/a&gt;. As
+such, from the point of view of CPython &lt;code&gt;hello_new&lt;/code&gt; is indistinguishable from
+&lt;code&gt;hello_old&lt;/code&gt;. It also means that HPy is required only to compile it but not to
+import it later. Finally, we expect the performance to be the very same as the
+extensions using the old API.&lt;/p&gt;
+&lt;p&gt;However, we can also explicitly ask HPy to produce an "universal binary",
+which targets the
+&lt;a href="https://docs.hpyproject.org/en/latest/overview.html#target-abis"&gt;HPy Universal ABI&lt;/a&gt;:
+as the name implies, universal binaries can be imported by CPython, but also
+by alternative implementations such as PyPy. We can build universal binaries
+by passing &lt;code&gt;--hpy-abi=universal&lt;/code&gt; to &lt;code&gt;setup.py&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="code"&gt;&lt;pre class="code literal-block"&gt;$ &lt;span class="c1"&gt;# clean the previous build&lt;/span&gt;
+$ rm -rf build/ *.so
+
+$ python setup.py --hpy-abi&lt;span class="o"&gt;=&lt;/span&gt;universal build_ext --inplace
+$ ls -1 *.so
+hello_new.hpy.so
+hello_old.cpython-38-x86_64-linux-gnu.so
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Note the filename: &lt;code&gt;hello_old&lt;/code&gt; is still a CPython-specific extension, but
+&lt;code&gt;hello_new.hpy.so&lt;/code&gt; is an universal binary. Once compiled, you can import it as
+usual:&lt;/p&gt;
+&lt;div class="code"&gt;&lt;pre class="code literal-block"&gt;&lt;span class="go"&gt;$ python&lt;/span&gt;
+&lt;span class="gp"&gt;&amp;gt;&amp;gt;&amp;gt; &lt;/span&gt;&lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="nn"&gt;hello_old&lt;/span&gt;&lt;span class="o"&gt;,&lt;/span&gt; &lt;span class="nn"&gt;hello_new&lt;/span&gt;
+&lt;span class="gp"&gt;&amp;gt;&amp;gt;&amp;gt; &lt;/span&gt;&lt;span class="n"&gt;hello_old&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;add&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;10&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;20&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="go"&gt;30&lt;/span&gt;
+&lt;span class="gp"&gt;&amp;gt;&amp;gt;&amp;gt; &lt;/span&gt;&lt;span class="n"&gt;hello_new&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;add&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="mi"&gt;30&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="mi"&gt;40&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+&lt;span class="go"&gt;70&lt;/span&gt;
+&lt;span class="gp"&gt;&amp;gt;&amp;gt;&amp;gt; &lt;/span&gt;&lt;span class="n"&gt;hello_new&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="vm"&gt;__file__&lt;/span&gt;
+&lt;span class="go"&gt;'/.../hello-hpy/hello_new.hpy.so'&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;div class="admonition note"&gt;
+&lt;p class="admonition-title"&gt;Note&lt;/p&gt;
+&lt;p&gt;At the moment of writing, because of
+&lt;a href="https://github.com/hpyproject/hpy/issues/191"&gt;Issue #191&lt;/a&gt; if you try to
+print the repr of &lt;code&gt;hello_new&lt;/code&gt;, you see something like this (note the &lt;code&gt;.py&lt;/code&gt;
+extension):&lt;/p&gt;
+&lt;div class="code"&gt;&lt;pre class="code literal-block"&gt;&amp;gt;&amp;gt;&amp;gt; hello_new
+&amp;lt;module 'hello_new' from '/.../hello-hpy/hello_new.py'&amp;gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;/div&gt;
+&lt;p&gt;Note that on its own, CPython does &lt;strong&gt;not&lt;/strong&gt; know how to import &lt;code&gt;.hpy.so&lt;/code&gt;
+files. The magic is done by the &lt;code&gt;hello_new.py&lt;/code&gt;, which is automatically
+generated by &lt;code&gt;setup.py&lt;/code&gt;:&lt;/p&gt;
+&lt;div class="code"&gt;&lt;pre class="code literal-block"&gt;&lt;span class="err"&gt;$&lt;/span&gt; &lt;span class="n"&gt;cat&lt;/span&gt; &lt;span class="n"&gt;hello_new&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;py&lt;/span&gt;
+&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;...&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+&lt;span class="k"&gt;def&lt;/span&gt; &lt;span class="nf"&gt;__bootstrap__&lt;/span&gt;&lt;span class="p"&gt;():&lt;/span&gt;
+    &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;...&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+    &lt;span class="kn"&gt;from&lt;/span&gt; &lt;span class="nn"&gt;hpy.universal&lt;/span&gt; &lt;span class="kn"&gt;import&lt;/span&gt; &lt;span class="n"&gt;load_from_spec&lt;/span&gt;
+    &lt;span class="n"&gt;ext_filepath&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;pkg_resources&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;resource_filename&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="vm"&gt;__name__&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="s1"&gt;'hello_new.hpy.so'&lt;/span&gt;&lt;span class="p"&gt;)&lt;/span&gt;
+    &lt;span class="n"&gt;m&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;load_from_spec&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="n"&gt;Spec&lt;/span&gt;&lt;span class="p"&gt;(&lt;/span&gt;&lt;span class="s1"&gt;'hello_new'&lt;/span&gt;&lt;span class="p"&gt;,&lt;/span&gt; &lt;span class="n"&gt;ext_filepath&lt;/span&gt;&lt;span class="p"&gt;))&lt;/span&gt;
+    &lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="o"&gt;...&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt;
+    &lt;span class="n"&gt;sys&lt;/span&gt;&lt;span class="o"&gt;.&lt;/span&gt;&lt;span class="n"&gt;modules&lt;/span&gt;&lt;span class="p"&gt;[&lt;/span&gt;&lt;span class="vm"&gt;__name__&lt;/span&gt;&lt;span class="p"&gt;]&lt;/span&gt; &lt;span class="o"&gt;=&lt;/span&gt; &lt;span class="n"&gt;m&lt;/span&gt;
+
+&lt;span class="n"&gt;__bootstrap__&lt;/span&gt;&lt;span class="p"&gt;()&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Finally, we can try to import our shiny new universal binary on PyPy:&lt;/p&gt;
+&lt;div class="code"&gt;&lt;pre class="code literal-block"&gt;$ /path/to/pypy-c-jit-101860-a2f7c80062e8-linux64/bin/pypy
+&amp;gt;&amp;gt;&amp;gt;&amp;gt; import hello_new
+&amp;gt;&amp;gt;&amp;gt;&amp;gt; hello_new.add&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;10&lt;/span&gt;, &lt;span class="m"&gt;20&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="m"&gt;30&lt;/span&gt;
+&amp;gt;&amp;gt;&amp;gt;&amp;gt; hello_new.__file__
+&lt;span class="s1"&gt;'/.../hello-hpy/hello_new.hpy.so'&lt;/span&gt;
+&amp;gt;&amp;gt;&amp;gt;&amp;gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;Similarly, it also just works on GraalPython:&lt;/p&gt;
+&lt;div class="code"&gt;&lt;pre class="code literal-block"&gt;$ /path/to/graalpython/hpy-venv/bin/graalpython
+&amp;gt;&amp;gt;&amp;gt; import hello_new
+&amp;gt;&amp;gt;&amp;gt; hello_new.add&lt;span class="o"&gt;(&lt;/span&gt;&lt;span class="m"&gt;10&lt;/span&gt;, &lt;span class="m"&gt;20&lt;/span&gt;&lt;span class="o"&gt;)&lt;/span&gt;
+&lt;span class="m"&gt;30&lt;/span&gt;
+&lt;/pre&gt;&lt;/div&gt;
+
+
+&lt;p&gt;That's all you need to get started with HPy. What we presented today is just
+the basics, of course: in the next posts we will dig more into the technical
+details, and show more interesting features than just a hello world.&lt;/p&gt;
+&lt;p&gt;Stay tuned!&lt;/p&gt;
+&lt;p&gt;&lt;em&gt;(edited on 2021-03-31 to include GraalPython)&lt;/em&gt;&lt;/p&gt;</description><guid>https://hpyproject.org/blog/posts/2021/03/hello-hpy/</guid><pubDate>Mon, 29 Mar 2021 10:00:00 GMT</pubDate></item></channel></rss>
